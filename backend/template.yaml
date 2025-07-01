@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Contact Form API Backend
+
+Globals:
+  Function:
+    Timeout: 5
+    Runtime: python3.12
+    LoggingConfig:
+      LogFormat: JSON
+    Architectures:
+      - x86_64
+
+Resources:
+  ContactFormFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: contact_form/
+      Handler: app.lambda_handler
+      Events:
+        SubmitContactForm:
+          Type: Api
+          Properties:
+            Path: /contact
+            Method: POST
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: ContactFormMessages
+
+  ContactFormTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ContactFormMessages
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL for contact form
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/contact"
+  LambdaFunctionArn:
+    Description: ContactForm Lambda Function ARN
+    Value: !GetAtt ContactFormFunction.Arn
+  LambdaFunctionRole:
+    Description: IAM Role for ContactForm Lambda
+    Value: !GetAtt ContactFormFunctionRole.Arn

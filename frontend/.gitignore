@@ -1,0 +1,42 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+
+# Lambda package deps
+backend/contact_form/*.dist-info/
+backend/contact_form/*.egg-info/
+backend/contact_form/__pycache__/
+
+# AWS SAM
+.aws-sam/
+samconfig.toml
+
+# Env files
+.env
+.env.*
