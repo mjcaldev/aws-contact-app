@@ -1,0 +1,7 @@
+# Normalize all text files to use LF in the repo
+* text=auto eol=lf
+
+# Treat these files as binary (no auto CRLF conversions)
+*.png binary
+*.jpg binary
+*.ico binary
