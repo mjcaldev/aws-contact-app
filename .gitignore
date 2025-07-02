@@ -1,0 +1,16 @@
+# Frontend
+node_modules/
+dist/
+.env*
+
+# Backend
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# AWS SAM
+.aws-sam/
+
+# macOS
+.DS_Store

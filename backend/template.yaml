@@ -2,19 +2,21 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Contact Form API Backend
 
-Globals:
-  Function:
-    Timeout: 5
-    Runtime: python3.12
-    LoggingConfig:
-      LogFormat: JSON
-    Architectures:
-      - x86_64
-
 Resources:
+  ContactFormApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: ContactFormApi
+      StageName: Prod
+      Cors:
+        AllowMethods: "'OPTIONS,POST'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+
   ContactFormFunction:
     Type: AWS::Serverless::Function
     Properties:
+      Runtime: python3.12
       CodeUri: contact_form/
       Handler: app.lambda_handler
       Events:
@@ -23,6 +25,7 @@ Resources:
           Properties:
             Path: /contact
             Method: POST
+            RestApiId: !Ref ContactFormApi
       Policies:
         - DynamoDBCrudPolicy:
             TableName: ContactFormMessages
@@ -42,10 +45,4 @@ Resources:
 Outputs:
   ApiEndpoint:
     Description: API Gateway endpoint URL for contact form
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/contact"
-  LambdaFunctionArn:
-    Description: ContactForm Lambda Function ARN
-    Value: !GetAtt ContactFormFunction.Arn
-  LambdaFunctionRole:
-    Description: IAM Role for ContactForm Lambda
-    Value: !GetAtt ContactFormFunctionRole.Arn
+    Value: !Sub "https://${ContactFormApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/contact"

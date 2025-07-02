@@ -7,6 +7,20 @@ dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table("ContactFormMessages")
 
 def lambda_handler(event, context):
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "OPTIONS,POST"
+    }
+
+    # Handle preflight request
+    if event.get("httpMethod") == "OPTIONS":
+        return {
+            "statusCode": 200,
+            "headers": headers,
+            "body": ""
+        }
+
     try:
         body = json.loads(event.get("body", "{}"))
 
@@ -15,10 +29,10 @@ def lambda_handler(event, context):
             if field not in body:
                 return {
                     "statusCode": 400,
+                    "headers": headers,
                     "body": json.dumps({"error": f"Missing field: {field}"})
                 }
 
-        # Construct the item
         item = {
             "id": str(uuid.uuid4()),
             "name": body["name"],
@@ -31,6 +45,7 @@ def lambda_handler(event, context):
 
         return {
             "statusCode": 200,
+            "headers": headers,
             "body": json.dumps({"message": "Contact form submitted successfully!"})
         }
 
@@ -38,5 +53,6 @@ def lambda_handler(event, context):
         print("Error:", e)
         return {
             "statusCode": 500,
+            "headers": headers,
             "body": json.dumps({"error": "Internal server error"})
         }
